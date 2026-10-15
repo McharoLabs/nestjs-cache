@@ -1,6 +1,7 @@
 import { createKeyv, Keyv } from '@keyv/redis';
 import { KeyvCacheableMemory } from 'cacheable';
 import type { FactoryProvider, ModuleMetadata } from '@nestjs/common';
+
 import type { CacheConfig, CacheStore } from '../types/cache.types';
 
 export type StoreFactory = () => Keyv[];
@@ -11,24 +12,43 @@ export interface BuiltCacheConfig {
 }
 
 export function createCacheConfig(config: CacheConfig): BuiltCacheConfig {
-  const { host, port, password } = config.redis;
-  const auth = password ? `:${encodeURIComponent(password)}@` : '';
-  const redisUrl = `redis://${auth}${host}:${String(port)}`;
-  const ttl = config.memory.ttl;
+  const memoryConfig = config.memory;
+  const redisConfig = config.redis;
 
   return {
     defaultStore: config.defaultStore,
     stores: {
-      memory: () => [
-        new Keyv({
-          ttl,
-          store: new KeyvCacheableMemory({
+      memory: (): Keyv[] => {
+        if (!memoryConfig) {
+          throw new Error(
+            'Memory cache configuration is required when using the memory store.',
+          );
+        }
+
+        const { ttl } = memoryConfig;
+
+        return [
+          new Keyv({
             ttl,
-            lruSize: 5000,
+            store: new KeyvCacheableMemory({
+              ttl,
+              lruSize: 5000,
+            }),
           }),
-        }),
-      ],
-      redis: () => {
+        ];
+      },
+
+      redis: (): Keyv[] => {
+        if (!redisConfig) {
+          throw new Error(
+            'Redis cache configuration is required when using the Redis store.',
+          );
+        }
+
+        const { host, port, password, ttl } = redisConfig;
+        const auth = password ? `:${encodeURIComponent(password)}@` : '';
+        const redisUrl = `redis://${auth}${host}:${String(port)}`;
+
         const redisStore = createKeyv(redisUrl, {
           namespace: config.appName ?? '',
         });
