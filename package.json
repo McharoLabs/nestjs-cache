@@ -12,11 +12,14 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "tsconfig.json",
+    "tsconfig.build.json"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "npm run build",
+    "postinstall": "npm run build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
@@ -67,5 +70,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "allowScripts": {
+    "nestjs-cache": true
+  }
 }
