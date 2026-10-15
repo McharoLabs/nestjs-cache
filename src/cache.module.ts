@@ -44,26 +44,39 @@ export class CacheModule {
   public static forRootAsync<TArgs extends unknown[] = unknown[]>(
     options: CacheModuleAsyncOptions<TArgs>,
   ): DynamicModule {
-    const configProvider = {
-      provide: CACHE_CONFIG,
-      useFactory: options.useFactory,
-      ...(options.inject !== undefined ? { inject: options.inject } : {}),
-    };
+    @Module({
+      imports: options.imports ?? [],
+      providers: [
+        {
+          provide: CACHE_CONFIG,
+          useFactory: options.useFactory,
+          ...(options.inject !== undefined ? { inject: options.inject } : {}),
+        },
+      ],
+      exports: [CACHE_CONFIG],
+    })
+    class CacheConfigModule {}
 
     return {
       module: CacheModule,
       imports: [
+        CacheConfigModule,
         NestCacheModule.registerAsync<Record<string, unknown>>({
-          ...(options.imports !== undefined
-            ? { imports: options.imports }
-            : {}),
+          imports: [CacheConfigModule],
           inject: [CACHE_CONFIG],
           useFactory: (config: CacheConfig) => ({
             stores: this.getStores(config),
           }),
         }),
       ],
-      providers: [configProvider, CacheService],
+      providers: [
+        {
+          provide: CACHE_CONFIG,
+          useFactory: options.useFactory,
+          ...(options.inject !== undefined ? { inject: options.inject } : {}),
+        },
+        CacheService,
+      ],
       exports: [CacheService, CACHE_CONFIG],
     };
   }
