@@ -2,7 +2,7 @@ import {
   CacheModule as NestCacheModule,
   type CacheOptions,
 } from '@nestjs/cache-manager';
-import { Module, type DynamicModule } from '@nestjs/common';
+import { Global, Module, type DynamicModule } from '@nestjs/common';
 
 import {
   createCacheConfig,
@@ -12,6 +12,7 @@ import { CACHE_CONFIG } from './constants/cache.constants';
 import { CacheService } from './services/cache.service';
 import type { CacheConfig } from './types/cache.types';
 
+@Global()
 @Module({})
 export class CacheModule {
   private static getStores(
