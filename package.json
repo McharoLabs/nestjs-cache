@@ -1,6 +1,6 @@
 {
   "name": "@mcharolabs/nestjs-cache",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A reusable NestJS library supporting memory and Redis caching",
   "type": "commonjs",
   "main": "./dist/index.js",
