@@ -20,7 +20,9 @@ export class CacheModule {
   ): NonNullable<CacheOptions<Record<string, unknown>>['stores']> {
     const builtConfig = createCacheConfig(config);
 
-    return builtConfig.stores[config.defaultStore]();
+    return builtConfig.stores[config.defaultStore]() as unknown as NonNullable<
+      CacheOptions<Record<string, unknown>>['stores']
+    >;
   }
 
   public static forRoot(config: CacheConfig): DynamicModule {
