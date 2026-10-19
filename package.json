@@ -31,7 +31,7 @@
     "prepublishOnly": "npm run check"
   },
   "peerDependencies": {
-    "@nestjs/cache-manager": "^2.0.0 || ^3.0.0",
+    "@nestjs/cache-manager": "^2.0.0 || ^3.0.0 || ^12.0.0",
     "@nestjs/common": "^10.0.0 || ^11.0.0",
     "@nestjs/core": "^10.0.0 || ^11.0.0"
   },
